@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Show</title>
+    </head>
+    <body>
+        <p th:text="${book.getName() + ', ' + book.getAuthor() + ', ' + book.getYear()}">VALUE</p>
+        <br/>
+        <div th:if="${whoAssignedBook.isEmpty()}">Эта книга сейчас сводобна. Кому назначить ее?
+            <form th:method="patch" th:action="@{/books/{id}/assign(id=${book.getId()})}">
+                <label for="book">Выберите человека:</label>
+                <select th:object="${book}" th:field="*{id}" id="book">
+                    <option th:each="person : ${people}" th:value="${person.getId()}" th:text="${person.getName()}"></option>
+                </select>
+                <input type="submit" value="Назначить книгу"/>
+
+            </form>
+
+            <a th:href="@{/books/{id}/edit(id=${book.getId()})}">Редактировать</a>
+
+            <form th:method="DELETE" th:action="@{/books/{id}(id=${book.getId()})}">
+                <input type="submit" value="Удалить"/>
+            </form>
+        </div>
+        <div th:unless="${whoAssignedBook.isEmpty()}">Книга сейчас у:
+            <span th:each="person : ${whoAssignedBook}">
+                <a th:href="@{/people/{id}(id=${person.getId()})}"
+                   th:text="${person.getName()}">user</a>
+            </span>
+            <form th:method="patch" th:action="@{/books/{id}/unassign(id=${book.getId()})}">
+                <input type="submit" value="Освободить книгу"/>
+            </form>
+        </div>
+    </body>
+</html>
